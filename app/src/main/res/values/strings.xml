@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Add And Remove View Dynamically</string>
+    <string name="add_field">Add Field</string>
+    <string-array name="types">
+        <item>Mobile</item>
+        <item>Office</item>
+        <item>Home</item>
+    </string-array>
+</resources>
