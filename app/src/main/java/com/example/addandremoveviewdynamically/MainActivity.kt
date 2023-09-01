@@ -74,6 +74,7 @@ class MainActivity: AppCompatActivity(),
             factor1 = (2..9).random()
             factor2 = (2..9).random()
             setUpFirstState(factor1, factor2)
+
         }
         /////////////////////////////////////////////////////////////
 //        binding.buttonmove.setOnClickListener {
