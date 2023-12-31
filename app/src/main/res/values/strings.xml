@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">Add And Remove View Dynamically</string>
-    <string name="add_field">Add Field</string>
-    <string-array name="types">
-        <item>Mobile</item>
-        <item>Office</item>
-        <item>Home</item>
-    </string-array>
+    <string name="next_step">Next Step</string>
+    <string name="start">Move the blocks to make bunches of ten.</string>
+    <string name="laying_or_standing">Do you make lying  or standing bunches of ten?</string>
 </resources>

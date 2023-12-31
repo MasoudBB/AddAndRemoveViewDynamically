@@ -11,53 +11,63 @@ package com.example.addandremoveviewdynamically
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.view.*
+import android.view.DragEvent
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.size
-import androidx.databinding.DataBindingUtil
-import com.akki.circlemenu.CircleMenu
 import com.akki.circlemenu.OnCircleMenuItemClicked
+import com.example.addandremoveviewdynamically.AnswerState.FINAL_ANSWER
+import com.example.addandremoveviewdynamically.AnswerState.NUMBER_OF_ADDED_CUBES
+import com.example.addandremoveviewdynamically.AnswerState.NUMBER_OF_COMPLETED_BUNCHES
+import com.example.addandremoveviewdynamically.AnswerState.START
 import com.example.addandremoveviewdynamically.databinding.ActivityMainBinding
+import com.mcdev.quantitizerlibrary.AnimationStyle
 
 
-class MainActivity: AppCompatActivity(),
-    View.OnTouchListener,
-    View.OnDragListener,
+class MainActivity : AppCompatActivity(), View.OnTouchListener, View.OnDragListener,
     OnCircleMenuItemClicked {
-    lateinit var binding: ActivityMainBinding
-    lateinit var soundEffect: SoundEffect
-    lateinit var frontColumns: ArrayList<LinearLayout>
-    lateinit var shadowColumns: ArrayList<LinearLayout>
-    lateinit var counter: Counter
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var soundEffect: SoundManager
+    private lateinit var frontColumns: ArrayList<LinearLayout>
+    private lateinit var shadowColumns: ArrayList<LinearLayout>
+    private lateinit var counter: Counter
 
     //    lateinit var prentLinearLayout: LinearLayout
     //    lateinit var staticAbacus: LinearLayout
-    lateinit var myAnimations: Animations
-    var factor1: Int = 10
-    var factor2: Int = 10
+    private lateinit var myAnimations: Animations
+    private var factor1: Int = 10
+    private var factor2: Int = 10
 
     //array for saving columns size
-    val deltaHorizontalCounters = mutableListOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-    val animated =  mutableListOf(false, false, false, false, false, false, false, false, false, false, false)
+    private val deltaHorizontalCounters = mutableListOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    private val animated =
+        mutableListOf(false, false, false, false, false, false, false, false, false, false, false)
 
+    // answer state
+    private var answerState = START
+    ///////////////////////////////
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-//        val view = binding.root
-//        setContentView(view)
-        //////////////////////////////////////////////////////////////////
-        counter = Counter()
-        val CircleMenu = findViewById<CircleMenu>(R.id.circle_menu)
-        CircleMenu.setOnMenuItemClickListener(this)
 
+        //binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        //hiding system UI visibility
+        window.addFlags(FLAG_LAYOUT_NO_LIMITS)
+        //////////////////////////////////////////////////////////////////
+        binding.hQ.textAnimationStyle = AnimationStyle.FALL_IN
         //////////////////////////////////////////////////////////////////
         title = "primary arithmetic"
         myAnimations = Animations()
-        soundEffect = SoundEffect(this)
+        soundEffect = SoundManager(this)
         frontColumns = ArrayList()
         shadowColumns = ArrayList()
         for (i in 0..10) {
@@ -65,58 +75,51 @@ class MainActivity: AppCompatActivity(),
             shadowColumns.add(binding.underParentLinearlayout.getChildAt(i) as LinearLayout)
         }
         /////////////////////////////////////////////////////////////
+        //selection of multiplicative factors
         factor1 = (2..9).random()
         factor2 = (2..9).random()
         //set up first state:
         setUpFirstState(factor1, factor2)
+        binding.cardViewHQ.visibility = View.INVISIBLE
         /////////////////////////////////////////////////////////////
+        //reselection of multiplicative factors
         binding.buttonReset.setOnClickListener {
             factor1 = (2..9).random()
             factor2 = (2..9).random()
             setUpFirstState(factor1, factor2)
-
+            binding.cardViewHQ.visibility = View.INVISIBLE
         }
         /////////////////////////////////////////////////////////////
-//        binding.buttonmove.setOnClickListener {
-//            //binding.parentLinearLayout.animate().translationY(300F).duration=0
-//            myAnimations.move(binding.parentLinearLayout.getChildAt(1))
-//        }
-//        binding.buttonStop.setOnClickListener {
-//            myAnimations.stop(binding.parentLinearLayout)
-//        }
-        /////////////////////////////////////////////////////////////
-        //???????????????????????????????????????
-//        binding.buttonEnd.setOnClickListener {
-//            for (i in 1..8) {
-//                val column = binding.parentLinearLayout.getChildAt(9) as LinearLayout
-//                addOverCube(column)
-//            }
-//            for (i in 0..7) {
-//                val column = binding.parentLinearLayout.getChildAt(9) as LinearLayout
-//                column.getChildAt(i).alpha = 0F
-//            }
-//
-//            for (i in 1..8) {
-//                val column = binding.parentLinearLayout.getChildAt(i) as LinearLayout
-//                column.getChildAt(0).animate().apply {
-//                    alpha(0F)
-//                    duration = (i * 1000).toLong()
-//                }.start()
-//                // fade(column.getChildAt(0))
-//            }
-//
-//            for (i in 7 downTo 0) {
-//                frontColumns[9].getChildAt(i).animate().apply {
-//                    alpha(1F)
-//                    duration = (7000 - i * 1000).toLong()
-//                }.start()
-//                //reversFade(binding.column9.getChildAt(i))
-//            }
-//
-//        }
+        binding.buttonNextStep.setOnClickListener {
+            binding.hQ.textAnimationStyle = AnimationStyle.FALL_IN
+            binding.hQ.value = 0
 
+            if (answerState == START) {
+                binding.textViewQuestion.text ="How many blocks did you add to each completed bunch?"
+                myAnimations.bounce(binding.textViewQuestion)
+                binding.cardViewHQ.visibility = View.VISIBLE
+                answerState = NUMBER_OF_COMPLETED_BUNCHES
 
+            } else if (answerState == NUMBER_OF_COMPLETED_BUNCHES) {
+                binding.textViewQuestion.text = "How many bunches of tens have you made?"
+                myAnimations.bounce(binding.textViewQuestion)
+                answerState = NUMBER_OF_ADDED_CUBES
+
+            } else if (answerState == NUMBER_OF_ADDED_CUBES) {
+                binding.textViewQuestion.text = "How many single blocks are left?"
+                myAnimations.bounce(binding.textViewQuestion)
+                answerState = FINAL_ANSWER
+
+            } else if (answerState == FINAL_ANSWER) {
+                answerState = AnswerState.NUMBER_OF_REMINDED_SINGLE_BLOCKS
+                binding.textViewQuestion.text = "What is the product of  $factor1 \u00D7 $factor2?"
+                myAnimations.bounce(binding.textViewQuestion)
+                binding.cardViewHQ.visibility = View.INVISIBLE
+            }
+        }
+    /////////////////////////////////////////////////////////////
     }
+
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
     //set up  first state
@@ -135,16 +138,12 @@ class MainActivity: AppCompatActivity(),
             shadowColumns[i].removeAllViews()
         }
         // filling above and under columns with cubes
-
         for (i in 1..m) {
             for (j in 1..n) {
-
                 val column = binding.parentLinearLayout.getChildAt(i) as LinearLayout
                 addOverCube(column)
-
                 // addOverCube(frontColumns[i])
                 addUnderCube(shadowColumns[i])
-
             }
 
         }
@@ -156,9 +155,12 @@ class MainActivity: AppCompatActivity(),
         //set drag and drop
         setDropAbles()
         setDragAbles()
+        //set up question text
+        answerState = START
+        binding.textViewQuestion.text = getString(R.string.start)
 
     }
-
+    ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
     private fun addOverCube(column: LinearLayout) {
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -169,7 +171,7 @@ class MainActivity: AppCompatActivity(),
     private fun addUnderCube(column: LinearLayout) {
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val cubView: View = inflater.inflate(R.layout.field, null)
-        cubView.alpha = 0.3F
+        cubView.alpha = 0.4F
         column.addView(cubView, 0)
     }
 
@@ -190,14 +192,6 @@ class MainActivity: AppCompatActivity(),
 
     }
 
-    private fun setColumnsCounter() {
-        for (i in 0..10) {
-            val columnCounterText =
-                binding.columnsCounterLinearlayout.getChildAt(i) as TextView
-            columnCounterText.text = "0"
-            columnCounterText.visibility = View.INVISIBLE
-        }
-    }
 
     private fun setDropAbles() {
         for (i in 1..10) {
@@ -212,7 +206,7 @@ class MainActivity: AppCompatActivity(),
             frontColumns[i].setOnDragListener(this)
         }
         // needs to complete
-        binding.rootConstraintlayout.setOnDragListener(this)
+        binding.root.setOnDragListener(this)
     }
 
     ////////////////////////////////////////////////////////////
@@ -233,54 +227,8 @@ class MainActivity: AppCompatActivity(),
 //        }
 //    }
     //////////////////////////////////////////////////////////////////
-    private fun setPrimaryHorizontalCounter(m: Int, n: Int) {
-        for (i in 1..m) {
-            val primaryHorizontalCounterTextView =
-                binding.primaryHorizontalCounterLinearlayout.getChildAt(i) as TextView
-            primaryHorizontalCounterTextView.text = " ${n}"
-            primaryHorizontalCounterTextView.visibility = View.VISIBLE
-        }
-
-        for (i in m + 1..10) {
-            val primaryHorizontalCounterTextView =
-                binding.primaryHorizontalCounterLinearlayout.getChildAt(i) as TextView
-            primaryHorizontalCounterTextView.text = "0"
-            primaryHorizontalCounterTextView.visibility = View.INVISIBLE
-        }
-
-//        for (i in 1..10) {
-//            val horizontalCounterTextView =
-//                binding.secondaryHorizontalCounterLinearlayout.getChildAt(i) as TextView
-//            horizontalCounterTextView.text = "0"
-//            horizontalCounterTextView.visibility = View.INVISIBLE
-//        }
-    }
 
     //////////////////////////////////////////////////////////////////
-    private fun addToHorizontalCounter(i: Int) {
-        deltaHorizontalCounters[i]++
-        val primaryHorizontalCounterTextView =
-            binding.primaryHorizontalCounterLinearlayout.getChildAt(i) as TextView
-        if (i <= factor1) {
-            primaryHorizontalCounterTextView.text = "${factor2}+${deltaHorizontalCounters[i]}"
-        } else {
-            primaryHorizontalCounterTextView.visibility = View.VISIBLE
-            primaryHorizontalCounterTextView.text = "${deltaHorizontalCounters[i]}"
-        }
-    }
-
-    //////////////////////////////////////////////////////////////////
-    private fun substractFromHorizontalCounter(k: Int) {
-        deltaHorizontalCounters[k]--
-        val primaryHorizontalCounterTextView =
-            binding.primaryHorizontalCounterLinearlayout.getChildAt(k) as TextView
-        if (k <= factor1) {
-            primaryHorizontalCounterTextView.text = "${factor2}${deltaHorizontalCounters[k]}"
-        } else {
-            primaryHorizontalCounterTextView.visibility = View.VISIBLE
-            primaryHorizontalCounterTextView.text = "${deltaHorizontalCounters[k]}"
-        }
-    }
 
     //////////////////////////////////////////////////////////////////
 //    fun setSecondaryHorizontalCounter(i: Int, j: Int) {
@@ -302,17 +250,6 @@ class MainActivity: AppCompatActivity(),
 //    }
 
     //////////////////////////////////////////////////////////////////
-    fun runFinalHorizontalCounter(m: Int) {
-        val finalCounterTextView =
-            binding.columnsCounterLinearlayout.getChildAt(m) as TextView
-        val finalCounter = finalCounterTextView.text.toString().toInt()
-//        var column = binding.dynamicAbacus.getChildAt(m) as LinearLayout
-//        finalCounterTextView.text = "${column.size}"
-        if (finalCounter == 9) finalCounterTextView.setTextColor(Color.MAGENTA)
-        finalCounterTextView.visibility = View.VISIBLE
-    }
-
-    //////////////////////////////////////////////////////////////////
     fun onAddPaleCub(column: LinearLayout) {
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val paleCubView: View = inflater.inflate(R.layout.field2, null)
@@ -327,17 +264,19 @@ class MainActivity: AppCompatActivity(),
             v!!.startDragAndDrop(null, shadow, v, 0)
             v.visibility = View.GONE
             return true
+
         } else {
             return false
         }
+
     }
 
     //////////////////////////////////////////////////////////
     override fun onDrag(v: View?, event: DragEvent?): Boolean {
-        if (event?.action == DragEvent.ACTION_DROP&& v is LinearLayout && v.size < 10) {
+        if (event?.action == DragEvent.ACTION_DROP && v is LinearLayout && v.size < 10) {
             val view = event.localState as View
             val from = view.parent as LinearLayout
-            val to = v as LinearLayout
+            val to = v
             if (v == from) {
                 view.visibility = View.VISIBLE
             } else {
@@ -353,8 +292,8 @@ class MainActivity: AppCompatActivity(),
                     view.alpha = 1F
                     myAnimations.blink(to)
 
-                    val i = (from.getParent() as ViewGroup).indexOfChild(from)
-                    val j = (to.getParent() as ViewGroup).indexOfChild(to)
+                    val i = (from.parent as ViewGroup).indexOfChild(from)
+                    val j = (to.parent as ViewGroup).indexOfChild(to)
                     //addToHorizontalCounter(j)
                     //substractFromHorizontalCounter(i)
 //                    setSecondaryHorizontalCounter(i, j)
@@ -363,19 +302,26 @@ class MainActivity: AppCompatActivity(),
                     //runFinalHorizontalCounter(j)
                     //addOverCube(from)
 //                    to.setBackgroundColor(Color.YELLOW)
+                    //make moved blocks dragable
+                    setDragAbles()
+                    setDropAbles()
+
                 }
 
                 if (to.size == 10) {
                     soundEffect.playSoundETenGroupMade()
                     //changing column to stack
                     // myAnimations.zoom(to)
-                    val j = (to.getParent() as ViewGroup).indexOfChild(to)
+
+                    //blinking the column
+                    myAnimations.blink(to)
+                    val j = (to.parent as ViewGroup).indexOfChild(to)
                     animated[j] = true
                     for (i in 0..9) {
                         to.getChildAt(i).animate()
                             .apply {
-                               //rotation for seeing stack
-                               // rotation(-19F)
+                                //rotation for seeing stack
+                                // rotation(-19F)
                                 duration = (1000).toLong()
 
                             }
@@ -384,16 +330,15 @@ class MainActivity: AppCompatActivity(),
                 }
             }
             return true
-        }
-        else if (event?.action == DragEvent.ACTION_DROP && v is LinearLayout && v.size >= 10) {
+        } else if (event?.action == DragEvent.ACTION_DROP && v is LinearLayout && v.size >= 10) {
             val view = event.localState as View
             val from = view.parent as LinearLayout
-            val to = v as LinearLayout
+            val to = v
             view.visibility = View.VISIBLE
             soundEffect.playSoundIncorrectBlockMove()
             view.animate().apply {
                 rotationBy(90F)
-                setDuration(500)
+                duration = 500
             }.start()
             view.alpha = 1f
             return true
@@ -408,18 +353,16 @@ class MainActivity: AppCompatActivity(),
             soundEffect.playSoundIncorrectBlockMove()
             view.animate().apply {
                 rotationBy(90F)
-                setDuration(500)
+                duration = 500
             }.start()
             return true
-        }
-
-        else {
+        } else {
             return true
         }
     }
 
     //////////////////////////////////////////////////////////
-     override fun onMenuItemClicked(id: Int) {
+    override fun onMenuItemClicked(id: Int) {
         var k = 2
         if (k == 1) {
             for (i in 1..counter.touchedCounter(id)) {

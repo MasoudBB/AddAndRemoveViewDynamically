@@ -1,5 +1,6 @@
 package com.example.addandremoveviewdynamically
 
+import android.text.Editable
 import android.view.View
 import android.view.animation.AnimationUtils
 
@@ -57,10 +58,18 @@ class Animations {
         view.startAnimation(animation)
     }
 
-    fun blink(view:View){
+    fun blink(view: View){
         val animation = AnimationUtils.loadAnimation(
             MyApplication.context,
             R.anim.blink_animation
+        )
+        view.startAnimation(animation)
+    }
+
+    fun bounce(view: View){
+        val animation =AnimationUtils.loadAnimation(
+            MyApplication.context,
+            R.anim.bounce
         )
         view.startAnimation(animation)
     }

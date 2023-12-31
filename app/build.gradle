@@ -31,7 +31,7 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures{
-        dataBinding true
+        viewBinding true
     }
 }
 
@@ -46,4 +46,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     //
     implementation 'com.github.alokverma:circle-menu:1.2'
+    //Quantitizer
+    implementation "com.github.kojofosu:Quantitizer:1.6.3"
 }

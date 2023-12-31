@@ -1,29 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="menus">
-        <item>@drawable/number_9</item>
-        <item>@drawable/number_8</item>
-        <item>@drawable/number_7</item>
-        <item>@drawable/number_6</item>
-        <item>@drawable/number_5</item>
-        <item>@drawable/number_4</item>
-        <item>@drawable/number_3</item>
-        <item>@drawable/number_2</item>
-        <item>@drawable/number_1</item>
-
-    </array>
-
-    <array name="menu_back_colors">
-        <item>@android:color/holo_blue_light</item>
-        <item>@android:color/holo_blue_light</item>
-        <item>@android:color/holo_blue_light</item>
-        <item>@android:color/holo_blue_light</item>
-        <item>@android:color/holo_blue_light</item>
-        <item>@android:color/holo_blue_light</item>
-        <item>@android:color/holo_blue_light</item>
-        <item>@android:color/holo_blue_light</item>
-        <item>@android:color/holo_blue_light</item>
-
-    </array>
 
 </resources>

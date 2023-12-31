@@ -9,7 +9,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         DynamicColors.applyToActivitiesIfAvailable(this)
         super.onCreate()
-        mContext = getApplicationContext()
+        mContext = applicationContext
     }
 
     companion object {
