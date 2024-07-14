@@ -18,21 +18,21 @@ class SoundManager(context: Context) {
         .setAudioAttributes(audioAttributes)
         .build()
 
-    private var soundCorrectBlockMove = soundPool.load(context, R.raw.alert_high_intensity, 1)
-    private var soundIncorrectBlockMove = soundPool.load(context, R.raw.navigation_transition_right, 1)
-    private var soundETenGroupMade = soundPool.load(context, R.raw.hero_decorative_celebration_01, 1)
+    private var soundCorrectMovement = soundPool.load(context, R.raw.alert_high_intensity, 1)
+    private var soundIncorrectMovement = soundPool.load(context, R.raw.navigation_transition_right, 1)
+    private var soundTenMade = soundPool.load(context, R.raw.hero_decorative_celebration_01, 1)
     private var soundSetup         = soundPool.load(context, R.raw.notification_decorative_01, 1)
 
-    fun playSoundETenGroupMade(){
-        soundPool.play(soundETenGroupMade, 1F, 1F, 0, 0, 1F)
+    fun playSoundTenMade(){
+        soundPool.play(soundTenMade, 1F, 1F, 0, 0, 1F)
     }
 
-    fun playSoundCorrectBlockMove(){
-        soundPool.play(soundCorrectBlockMove, 1F, 1F, 0, 0, 1F)
+    fun playSoundCorrectMovement(){
+        soundPool.play(soundCorrectMovement, 1F, 1F, 0, 0, 1F)
     }
 
-    fun playSoundIncorrectBlockMove(){
-        soundPool.play(soundIncorrectBlockMove, 1F, 1F, 0, 0, 1F)
+    fun playSoundIncorrectMovement(){
+        soundPool.play(soundIncorrectMovement, 1F, 1F, 0, 0, 1F)
     }
 
     fun playSoundSetup(){

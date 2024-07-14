@@ -22,7 +22,6 @@ class Animations {
         view.startAnimation(animation)
     }
 
-
     fun fade(view: View) {
         animated =true
         val animation = AnimationUtils.loadAnimation(
@@ -73,6 +72,7 @@ class Animations {
         )
         view.startAnimation(animation)
     }
+
     fun stop(view: View){
      view.clearAnimation()
     }

@@ -245,7 +245,7 @@
         android:baselineAligned="true"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline_first"
-        app:layout_constraintDimensionRatio="11:15"
+        app:layout_constraintDimensionRatio="11:12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -498,23 +498,24 @@
         android:layout_marginBottom="757dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintGuide_percent="0.54" />
+        app:layout_constraintGuide_end="394dp" />
 
 
     <TextView
         android:id="@+id/textViewQuestion"
         style="@style/QuestionText"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/coiny"
         android:padding="5dp"
         android:text=""
-        android:textSize="24sp"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline_second" />
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/textViewFinalAnswer"
@@ -524,6 +525,7 @@
         android:text="7 \u00D7 8 = ..."
         android:textSize="48sp"
         android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/guideline_third"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -547,7 +549,8 @@
             android:layout_height="wrap_content"
             android:elevation="10dp"
             android:foregroundGravity="center"
-            android:padding="5dp" />
+            android:padding="5dp"
+            android:visibility="visible" />
 
     </androidx.cardview.widget.CardView>
 
@@ -578,16 +581,45 @@
         android:id="@+id/buttonReset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="162dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="161dp"
+        android:layout_marginStart="24dp"
         android:backgroundTint="@color/green"
         android:text="reset"
         android:textColor="@android:color/background_dark"
         app:cornerRadius="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonNextStep"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonNextStep" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_third" />
+
+    <Button
+        android:id="@+id/buttonRotate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/green"
+        android:text="rotate"
+        android:textColor="@android:color/background_dark"
+        app:cornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonNextStep"
+        app:layout_constraintTop_toTopOf="@+id/guideline_third" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline_second"
+        app:srcCompat="@drawable/falstaf" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.67" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

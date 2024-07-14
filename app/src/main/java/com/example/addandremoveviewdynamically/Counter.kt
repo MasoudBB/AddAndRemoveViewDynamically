@@ -6,7 +6,6 @@ import android.widget.Toast
 import com.akki.circlemenu.OnCircleMenuItemClicked
 
 class Counter {
-
     fun touchedCounter(id: Int): Int {
         var selectedNumber = 0
         when (id) {
